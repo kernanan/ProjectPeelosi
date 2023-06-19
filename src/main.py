@@ -1,8 +1,12 @@
 from src.Data.BenzingaAPICaller import BenzingaAPICaller
+from src.Data.HouseStockWatcherAPICaller import HouseStockWatcherAPICaller
 
 
 def main():
-    print('Running program')
+    # print('Running program')
+    # house = HouseStockWatcherAPICaller()
+    # house.alertWhenTargetsBuyStock('sdf', 'sdf', 'sdf', 'sdf')
+
     benzinga = BenzingaAPICaller()
     benzinga.getGovernmentTrades()
 
