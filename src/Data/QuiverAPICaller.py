@@ -7,7 +7,7 @@ class QuiverAPICaller(APICaller):
     def __init__(self):
         pass
 
-    def getStockStatistics(self, id):
+    def getStockTrades(self, id):
         pass
 
     def alertWhenTargetsBuyStock(self, fromDate, toDate, minimumShares, minimumCost):

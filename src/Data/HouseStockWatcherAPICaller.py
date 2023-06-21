@@ -7,7 +7,7 @@ import xml.etree.ElementTree as ET
 class HouseStockWatcherAPICaller(APICaller):
     def __init__(self):
         pass
-    def getStockStatistics(self, id):
+    def getStockTrades(self, id):
         pass
 
     def alertWhenStockBoughtByTarget(self, id, fromDate, minimumShares, minimumCost):
