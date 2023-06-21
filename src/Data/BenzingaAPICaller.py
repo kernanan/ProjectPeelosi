@@ -21,18 +21,27 @@ class BenzingaAPICaller(APICaller):
     def alertWhenTargetsBuyStock(self, fromDate, toDate, minimumShares, minimumCost):
         pass
 
-    def getGovernmentTrades(self):
+    def getGovernmentTrades(self, politicianName):
         getAllGovernmentTradesURL = 'https://api.benzinga.com/api/v1/gov/usa/congress/trades?token={0}'.format(self.authToken)
         headers = {'accept': 'application/json'}
         print(getAllGovernmentTradesURL)
         jsonData = self.requestJSONByURL(getAllGovernmentTradesURL, headers)
-        print(jsonData)
+        dataEntriesFilteredByPoliticianName = self.filterDataByPoliticianName(politicianName, jsonData)
+        return dataEntriesFilteredByPoliticianName
 
     def filterDataByTicker(self, tickerId, jsonData):
         entries = []
         for data in jsonData['data']:
             if 'security' in data:
                 if 'ticker' in data['security'] and data['security']['ticker'] == tickerId:
+                    entries.append(data)
+        return entries
+
+    def filterDataByPoliticianName(self, politicianName, jsonData):
+        entries = []
+        for data in jsonData['data']:
+            if 'filer_info' in data:
+                if 'member_name' in data['filer_info'] and data['filer_info']['member_name'] == politicianName:
                     entries.append(data)
         return entries
 

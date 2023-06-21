@@ -25,8 +25,16 @@ class TargetTracker():
         self.targetPoliticians[str(targetName)] = True
 
     def getStatisticsOnPoliticians(self):
+        politicianInfo = {}
         for target in self.targetPoliticians:
-            print(target)
+            print('Getting Information On Politician {0}'.format(target))
+            dataOnThisPolitician = self.APICaller.getGovernmentTrades(target)
+            if len(dataOnThisPolitician) == 0:
+                politicianInfo[target] = 'No Data Found'
+            else:
+                politicianInfo[target] = dataOnThisPolitician
+        return politicianInfo
+
 
     def addTargetStocks(self, tickerId):
         self.targetStocks[str(tickerId)] = True
