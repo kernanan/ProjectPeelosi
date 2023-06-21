@@ -1,14 +1,16 @@
 from src.Data.BenzingaAPICaller import BenzingaAPICaller
 from src.Data.HouseStockWatcherAPICaller import HouseStockWatcherAPICaller
+from src.Domain.TargetTracker import TargetTracker
 
 
 def main():
-    # print('Running program')
-    # house = HouseStockWatcherAPICaller()
-    # house.alertWhenTargetsBuyStock('sdf', 'sdf', 'sdf', 'sdf')
-
-    benzinga = BenzingaAPICaller()
-    benzinga.getGovernmentTrades()
+    siteToSourceData = 'Benzinga'
+    tracker = TargetTracker(siteToSourceData)
+    tracker.addTargetPoliticians('Nancy Pelosi')
+    tracker.getStatisticsOnPoliticians()
+    tracker.addTargetStocks('TSLA')
+    dataOnTrackedStocks = tracker.getStatsticsOnStocks()
+    print(dataOnTrackedStocks)
 
 if __name__ == "__main__":
     main()
