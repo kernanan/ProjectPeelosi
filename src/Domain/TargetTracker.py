@@ -3,6 +3,7 @@ import re
 from src.Data.BenzingaAPICaller import BenzingaAPICaller
 from src.Data.HouseStockWatcherAPICaller import HouseStockWatcherAPICaller
 from src.Data.QuiverAPICaller import QuiverAPICaller
+from src.Domain.UserPreferences import UserPreferences
 
 
 class TargetTracker():
@@ -17,39 +18,39 @@ class TargetTracker():
         else:
             print('The Source you have entered is invalid. Defaulting to Benzinga.')
             self.APICaller = BenzingaAPICaller()
-        self.targetPoliticians = {}
-        self.targetStocks = {}
-        self.timers = {'Stock': '', 'Politician': ''}
-        self.stockNotificationsOn = False
-        self.politicianNotificiationsOn = False
+        self.users = {}
 
-    def addTargetPoliticians(self, targetName):
-        self.targetPoliticians[str(targetName)] = True
+    def addTargetPoliticians(self, userId, targetName):
+        pass
 
-    def addTargetStocks(self, tickerId):
-        self.targetStocks[str(tickerId)] = True
+    def addTargetStocks(self, userId, tickerId):
+        pass
 
-    def getStatsticsOnStocks(self, fromTransactionDate, toTransactionDate):
+    def getStatsticsOnStock(self, tickerId, fromTransactionDate, toTransactionDate):
         stockInfo = {}
-        for stock in self.targetStocks:
-            print('Getting Information on ticker {0}'.format(stock))
-            dataOnThisStock = self.APICaller.getStockTrades(stock, fromTransactionDate, toTransactionDate)
-            if len(dataOnThisStock) == 0:
-                stockInfo[stock] = 'No Data Found'
-            else:
-                stockInfo[stock] = dataOnThisStock
+        print('Getting Information on ticker {0}'.format(tickerId))
+        dataOnThisStock = self.APICaller.getStockTrades(tickerId, fromTransactionDate, toTransactionDate)
+        if len(dataOnThisStock) == 0:
+            stockInfo[tickerId] = 'No Data Found'
+        else:
+            stockInfo[tickerId] = dataOnThisStock
         return stockInfo
 
-    def getStatisticsOnPoliticians(self, fromTransactionDate, toTransactionDate):
+    def getStatisticsOnPolitician(self, targetName, fromTransactionDate, toTransactionDate):
         dateRegexPattern = r"^\d{4}-\d{2}-\d{2}$"
         if not re.match(dateRegexPattern, fromTransactionDate) or not re.match(dateRegexPattern, toTransactionDate):
             raise SyntaxError("Date is not in form: {0}".format('%Y-%m-%d'))
         politicianInfo = {}
-        for target in self.targetPoliticians:
-            print('Getting Information On Politician {0}'.format(target))
-            dataOnThisPolitician = self.APICaller.getPoliticianTrades(target, fromTransactionDate, toTransactionDate)
-            if len(dataOnThisPolitician) == 0:
-                politicianInfo[target] = 'No Data Found'
-            else:
-                politicianInfo[target] = dataOnThisPolitician
+        print('Getting Information on politician {0}'.format(targetName))
+        dataOnThisPolitician = self.APICaller.getPoliticianTrades(targetName, fromTransactionDate, toTransactionDate)
+        if len(dataOnThisPolitician) == 0:
+            politicianInfo[targetName] = 'No Data Found'
+        else:
+            politicianInfo[targetName] = dataOnThisPolitician
         return politicianInfo
+
+    def alertWhenStockBoughtByTarget(self, fromDate, minimumShares, minimumCost):
+        pass
+
+    def alertWhenTargetsBuyStock(self, fromDate, toDate, minimumShares, minimumCost):
+        pass

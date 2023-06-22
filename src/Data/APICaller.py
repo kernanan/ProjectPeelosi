@@ -12,13 +12,6 @@ class APICaller(ABC):
     @abstractmethod
     def getPoliticianTrades(self, politicianName, fromTransactionDate, toTransactionDate):
         pass
-    @abstractmethod
-    def alertWhenStockBoughtByTarget(self, id, fromDate, minimumShares, minimumCost):
-        pass
-
-    @abstractmethod
-    def alertWhenTargetsBuyStock(self, fromDate, toDate, minimumShares, minimumCost):
-        pass
 
     def requestJSONByURL(self, url, headers):
         response = requests.get(url, headers=headers)
