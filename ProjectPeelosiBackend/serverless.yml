@@ -4,11 +4,15 @@ frameworkVersion: '3'
 
 custom:
   wsgi:
-    app: app.app
+    app: app.EndpointController
+#    app: app.app
 
 provider:
   name: aws
   runtime: python3.9
+  stage: dev
+  region: us-east-1
+  memorySize: 128
 
 functions:
   api:

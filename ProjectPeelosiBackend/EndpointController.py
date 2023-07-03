@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from urllib.parse import unquote
-from flask import Flask, request
+from flask import Flask, jsonify, make_response
 
 from src.Domain.StockMarketTracker import StockMarketTracker
 from src.Domain.TargetTracker import TargetTracker
