@@ -2,11 +2,15 @@ from datetime import datetime, timedelta
 from urllib.parse import unquote
 from flask import Flask, request
 
+from src.Domain.StockMarketTracker import StockMarketTracker
 from src.Domain.TargetTracker import TargetTracker
 
 app = Flask(__name__)
-siteToSourceData = 'Benzinga'
-tracker = TargetTracker(siteToSourceData)
+siteToSourcePoliticianData = 'Benzinga'
+targetTracker = TargetTracker(siteToSourcePoliticianData)
+siteToSourceStockMarketData = 'Darqube'
+marketTracker = StockMarketTracker(siteToSourceStockMarketData)
+
 
 @app.route('/addTrackedPolitician')
 def addTrackedPolitician():
@@ -33,10 +37,23 @@ def getPoliticiansHistoricalTrades(targetName):
     if toDate is None:
         toDate = getTodaysDate()
     print(f'Received Request for {targetName} trading history from {fromDate} to {toDate}')
-    return tracker.getStatisticsOnPolitician(targetName, fromDate, toDate)
+    return targetTracker.getStatisticsOnPolitician(targetName, fromDate, toDate)
+
+@app.route('/getStockTradesHistorical/<tickerId>')
+def getStockTradesHistorical(tickerId):
+    if tickerId is None:
+        return 'No ticker provided'
+    fromDate = request.args.get('fromDate')
+    toDate = request.args.get('toDate')
+    if fromDate is None:
+        fromDate = getTwoWeeksAgo()
+    if toDate is None:
+        toDate = getTodaysDate()
+    print(f'Received Request for politicians\' {tickerId} trading history from {fromDate} to {toDate}')
+    return targetTracker.getStatsticsOnStock(tickerId, fromDate, toDate)
 
 @app.route('/getStockHistorical/<tickerId>')
-def getStockHistoricalTrades(tickerId):
+def getStockHistorical(tickerId):
     if tickerId is None:
         return 'No ticker provided'
     fromDate = request.args.get('fromDate')
@@ -46,7 +63,8 @@ def getStockHistoricalTrades(tickerId):
     if toDate is None:
         toDate = getTodaysDate()
     print(f'Received Request for {tickerId} trading history from {fromDate} to {toDate}')
-    return tracker.getStatsticsOnStock(tickerId, fromDate, toDate)
+    return marketTracker.getHistoricalData(tickerId, fromDate, toDate)
+
 
 @app.route('/')
 def checkConnection():

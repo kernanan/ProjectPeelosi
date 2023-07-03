@@ -1,4 +1,4 @@
-from src.Data.APICaller import APICaller
+from src.Data.TargetStocks.APICaller import APICaller
 
 
 class BenzingaAPICaller(APICaller):

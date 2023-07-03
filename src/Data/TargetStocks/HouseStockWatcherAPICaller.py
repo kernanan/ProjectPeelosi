@@ -1,6 +1,6 @@
 import requests
 
-from src.Data.APICaller import APICaller
+from src.Data.TargetStocks.APICaller import APICaller
 import xml.etree.ElementTree as ET
 
 
