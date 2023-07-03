@@ -1,9 +1,8 @@
 import re
 
-from src.Data.BenzingaAPICaller import BenzingaAPICaller
-from src.Data.HouseStockWatcherAPICaller import HouseStockWatcherAPICaller
-from src.Data.QuiverAPICaller import QuiverAPICaller
-from src.Domain.UserPreferences import UserPreferences
+from src.Data.TargetStocks.BenzingaAPICaller import BenzingaAPICaller
+from src.Data.TargetStocks.HouseStockWatcherAPICaller import HouseStockWatcherAPICaller
+from src.Data.TargetStocks.QuiverAPICaller import QuiverAPICaller
 
 
 class TargetTracker():

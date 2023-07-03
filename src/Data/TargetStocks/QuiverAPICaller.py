@@ -1,5 +1,4 @@
-from src.Data.APICaller import APICaller
-import requests
+from src.Data.TargetStocks.APICaller import APICaller
 
 
 class QuiverAPICaller(APICaller):
