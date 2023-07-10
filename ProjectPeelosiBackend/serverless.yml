@@ -4,8 +4,7 @@ frameworkVersion: '3'
 
 custom:
   wsgi:
-    app: app.EndpointController
-#    app: app.app
+    app: app.app
 
 provider:
   name: aws
