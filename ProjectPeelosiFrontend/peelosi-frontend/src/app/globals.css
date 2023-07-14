@@ -30,44 +30,52 @@ body {
     background-color: #000033;
     width: 100%;
     height: 100vh; /* Adjust the height as needed */
-    position: relative;
+    position: flex;
     top: 0;
     left: 0;
-    z-index: -1; /* Place the background behind other elements */
+    z-index: 0; /* Place the background behind other elements */
 }
 
 .mainContainer {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100vh; /* Adjust the height as needed */
+    position: relative;
 }
 
 .projectTitle {
     color: #DBDBDB;
-    font-family: "Roboto Mono", monospace;
-    font-size: 300%
+    font-family: "Courier New", monospace;
+    font-size: 300%;
+}
+
+.titleContainer {
+    transform: translate(10%, 50%);
 }
 
 .projectSubHeader {
     color: #B9B9B9;
-    font-family: "Roboto Mono", monospace;
+    font-family: "Courier New", monospace;
     font-size: 150%
 }
 
 .dataContainer {
-    display: flex;
+    transform: translate(10%, 14%);
+    display: grid;
+    width: 80%;
+    align-content: space-evenly;
+    grid-template-columns: 7fr 3fr;
+
 }
 
 .chartContainer {
-    width: 70%;
-    float: left;
+    width: 100%;
+    float: center;
 
 }
 
 .controlPanelContainer {
-    width: 30%;
-    float: right;
+    width: 100%;
+    float: center;
 
 }
 
@@ -82,6 +90,9 @@ body {
 }
 
 .stockInfoRow {
+    display: grid;
+    justify-content: center; /* Horizontal */
+    align-content: top; /* Vertical */
     height: 25%;
     width: 100%;
     background-color: #000017;
@@ -91,6 +102,10 @@ body {
 }
 
 .targetPanel {
+    display: grid;
+    justify-content: space-evenly; /* Horizontal */
+    align-content: top; /* Vertical */
+
     float: bottom;
     width: 100%;
     height: 30%;
@@ -99,5 +114,122 @@ body {
     border-color: gray;
     border-width: 1px;
     margin: 3px;
+}
+
+.targetBoxTitle {
+    text-align: center;
+    color: #B9B9B9;
+    font-family: "Roboto Mono", monospace;
+    font-size: 140%;
+}
+
+.stockBoxCategory {
+    text-align: center;
+    color: #B9B9B9;
+    font-family: "Roboto Mono", monospace;
+    font-size: 120%;
+    width: 100%;
+}
+
+.stockName {
+    color: #B9B9B9;
+    font-family: "Roboto Mono", monospace;
+    font-size: 180%;
+}
+
+.stockValue {
+    text-align: center;
+    color: #003c00;
+    font-family: "Roboto Mono", monospace;
+    font-size: 240%;
+}
+
+.sampleTargetName {
+    color: #B9B9B9;
+    font-family: "Roboto Mono", monospace;
+    font-size: 140%;
+    text-align: center;
+
+    -webkit-transition: color 0.2s ease-out;
+    -moz-transition: color 0.2s ease-out;
+    -o-transition: color 0.2s ease-out;
+    -ms-transition: color 0.2s ease-out;
+    transition: color 0.2s ease-out, font-size .4s;
+}
+.sampleTargetName:hover {
+    color: #3A0080;
+    font-size: 160%;
+}
+
+/* Search Bar */
+
+.box{
+}
+
+.input {
+    padding: 2px;
+    background: none;
+    border: 4px solid #3A0080;
+    border-radius: 50px;
+    box-sizing: border-box;
+    font-family: "Roboto Mono", monospace;
+    font-size: 140%;
+    color: #B9B9B9;
+    outline: none;
+    transition: .5s;
+    text-align: center;
+    height: 0%;
+}
+.box:hover input{
+    background: #3b3640;
+    border-radius: 10px;
+    transition: .5s;
+}
+.box i{
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translate(-50%,-50%);
+    font-size: 26px;
+    color: #ffd52d;
+    transition: .2s;
+}
+.box:hover i{
+    opacity: 0;
+    z-index: -1;
+}
+
+/*timeline options*/
+
+.timelineOptionContainer{
+    display: inline-grid;
+    justify-content: space-between; /* Horizontal */
+    align-content: top; /* Vertical */
+    grid-auto-columns: 1fr;
+    grid-auto-flow:column;
+}
+
+.timelineOption {
+    font-size: 165%;
+    color: #B9B9B9;
+    grid-row: 1;
+    border-color: #3A0080;
+    border: 3px solid;
+    border-radius: 10px;
+    margin: 3px;
+    height: 80%;
+
+
+}
+.timelineOption:hover {
+    background-color: #000033;
+    color: #3A0080;
+    font-size: 170%;
+
+    -webkit-transition: color 0.2s ease-out;
+    -moz-transition: color 0.2s ease-out;
+    -o-transition: color 0.2s ease-out;
+    -ms-transition: color 0.2s ease-out;
+    transition: color 0.2s ease-out, font-size .4s, height 0.3s, width 0.3s;
 }
 
