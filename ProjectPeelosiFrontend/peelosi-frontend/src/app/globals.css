@@ -108,7 +108,7 @@ body {
 
     float: bottom;
     width: 100%;
-    height: 30%;
+    height: 35%;
     background-color: #000017;
     border-style: solid;
     border-color: gray;
@@ -161,9 +161,31 @@ body {
     font-size: 160%;
 }
 
+.searchButton {
+    color: #B9B9B9;
+    font-family: "Roboto Mono", monospace;
+    font-size: 140%;
+    font-weight: bold;
+    text-align: center;
+    align-items: center;
+    margin-left: 6px;
+
+    -webkit-transition: color 0.2s ease-out;
+    -moz-transition: color 0.2s ease-out;
+    -o-transition: color 0.2s ease-out;
+    -ms-transition: color 0.2s ease-out;
+    transition: color 0.2s ease-out, font-size .4s;
+}
+.searchButton:hover {
+    font-size: 150%;
+}
+
 /* Search Bar */
 
 .box{
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .input {
@@ -180,12 +202,12 @@ body {
     text-align: center;
     height: 0%;
 }
-.box:hover input{
+.searchBox:hover input{
     background: #3b3640;
     border-radius: 10px;
     transition: .5s;
 }
-.box i{
+.searchBox i{
     position: absolute;
     top: 50%;
     right: 15px;
@@ -194,7 +216,7 @@ body {
     color: #ffd52d;
     transition: .2s;
 }
-.box:hover i{
+.searchBox:hover i{
     opacity: 0;
     z-index: -1;
 }

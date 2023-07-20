@@ -66,9 +66,10 @@ function timelineOptions() {
 function targetSearchBar() {
     return (
     <div class="box">
-        <form name="search">
+        <form className="searchBox" name="search">
             <input type="text" class="input" name="txt" onmouseout="this.value = ''; this.blur();" />
         </form>
+    <button className="searchButton">Search</button>
     </div>
     )
 }
