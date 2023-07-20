@@ -6,13 +6,23 @@ import { useState, useEffect } from 'react'
 //const DynamicBarChart = dynamic(() => import('react-apexcharts'), { ssr: false });
 import DynamicBarChart from 'react-apexcharts'
 import { IconName } from "react-icons/fa";
+import {getMarketData} from 'APICaller'
+
+var targetName = 'Nancy Pelosi'
+var stockStats = {'ticker': 'META', 'Name': 'Meta Platforms Inc.', 'CurrentValue': '208.12'}
+var graphData = {'dateRange': ['07-01-2022', '08-01-2022', '09-01-2022', '10-01-2022', '11-01-2022', '12-01-2022', '01-01-2023', '02-01-2023', '03-01-2023', '04-01-2023', '05-01-2023', '06-01-2023', '07-01-2023'],
+                'stockMarket': [12, 19, 3, 5, 2, 3, 1, 1, 1, 1, 3, 5, 8],
+                'targetBuys': [5, null, null, 7, 8],
+                'targetSells': [3, null, 6, null, null, null, null, 4]}
+
+var counter = 0
 
 export default function Home() {
   return (
     <div className="homeContainer">
         <div className="mainContainer">
             <div className="titleContainer">
-                {projectHeader("Nancy Pelosi", "META")}
+                {projectHeader(targetName, "META")}
             </div>
             <div className="dataContainer">
                 <div className="chartContainer">
@@ -52,13 +62,75 @@ export default function Home() {
   )
 }
 
+function countButton() {
+    const [count, setCount] = useState(0);
+
+    const handleCount = () => {
+        let nextCount = count + 1
+        setCount(nextCount)
+        counter = nextCount
+    }
+
+    return(
+        <button className="sampleTargetName" onClick={handleCount}>{counter}</button>
+    )
+}
+
+function displayButton() {
+    return (
+        <div className="sampleTargetName">{counter}</div>
+    )
+}
+
 function timelineOptions() {
+    const [stockMarketData, setStockMarketData] = useState([])
+
+    const get2WMarketData = () => {
+        let apiResponse = getMarketData('META', '2W')
+        let dateRange = apiResponse['x']
+        let marketData = apiResponse['y']
+        console.log(marketData)
+        setStockMarketData(marketData)
+        graphData['dateRange'] = dateRange
+        graphData['stockMarket'] = marketData
+    }
+
+    const get1MMarketData = () => {
+        let apiResponse = getMarketData('META', '1M')
+        let dateRange = apiResponse['x']
+        let marketData = apiResponse['y']
+        console.log(marketData)
+        setStockMarketData(marketData)
+        graphData['dateRange'] = dateRange
+        graphData['stockMarket'] = marketData
+    }
+
+    const get1YMarketData = () => {
+        let apiResponse = getMarketData('META', '1Y')
+        let dateRange = apiResponse['x']
+        let marketData = apiResponse['y']
+        console.log(marketData)
+        setStockMarketData(marketData)
+        graphData['dateRange'] = dateRange
+        graphData['stockMarket'] = marketData
+    }
+
+    const get3YMarketData = () => {
+        let apiResponse = getMarketData('META', '3Y')
+        let dateRange = apiResponse['x']
+        let marketData = apiResponse['y']
+        console.log(marketData)
+        setStockMarketData(marketData)
+        graphData['dateRange'] = dateRange
+        graphData['stockMarket'] = marketData
+    }
+
     return (
     <div className="timelineOptionContainer">
-        <button className="timelineOption">2W</button>
-        <button className="timelineOption">1M</button>
-        <button className="timelineOption">1Y</button>
-        <button className="timelineOption">5Y</button>
+        <button className="timelineOption" onClick={get2WMarketData}>2W</button>
+        <button className="timelineOption" onClick={get1MMarketData}>1M</button>
+        <button className="timelineOption" onClick={get1YMarketData}>1Y</button>
+        <button className="timelineOption" onClick={get3YMarketData}>3Y</button>
     </div>
     )
 }
@@ -120,23 +192,21 @@ function targetPanelChooser() {
 }
 
 function stockChart(){
-    const [isClient, setIsClient] = useState(false);
-
     var series = [
       {
         name: 'Stock Market',
         type: 'area',
-        data: [12, 19, 3, 5, 2, 3, 1, 1, 1, 1, 3, 5, 8],
+        data: graphData['stockMarket'],
       },
       {
         name: 'Target Buys',
         type: 'column',
-        data: [5, null, null, 7, 8],
+        data: graphData['targetBuys'],
       },
       {
         name: 'Target Sells',
         type: 'column',
-        data: [3, null, 6, null, null, null, null, 4],
+        data: graphData['targetSells'],
       }
     ];
 
@@ -146,14 +216,6 @@ function stockChart(){
         stacked: false,
         toolbar: {
             show: false,
-//            tools: {
-//              download: true,
-//              selection: false,
-//              zoom: false,
-//              zoomin: false,
-//              zoomout: false,
-//              pan: false,
-//            }
         }
       },
       dataLabels: {
@@ -169,7 +231,7 @@ function stockChart(){
                     colors: '#B9B9B9'
                 }
             },
-            categories: ['07-01-2022', '08-01-2022', '09-01-2022', '10-01-2022', '11-01-2022', '12-01-2022', '01-01-2023', '02-01-2023', '03-01-2023', '04-01-2023', '05-01-2023', '06-01-2023', '07-01-2023'],
+            categories: graphData['dateRange'],
       },
       yaxis: [{
             title: {

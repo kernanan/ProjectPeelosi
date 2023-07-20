@@ -246,7 +246,6 @@ body {
 .timelineOption:hover {
     background-color: #000033;
     color: #3A0080;
-    font-size: 170%;
 
     -webkit-transition: color 0.2s ease-out;
     -moz-transition: color 0.2s ease-out;
