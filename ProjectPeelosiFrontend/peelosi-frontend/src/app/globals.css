@@ -89,11 +89,23 @@ body {
     margin: 3px;
 }
 
+.stockInfoRowHead {
+    display: grid;
+    justify-content: center; /* Horizontal */
+    align-content: top; /* Vertical */
+    height: 40%;
+    width: 100%;
+    background-color: #000017;
+    border-style: solid;
+    border-color: gray;
+    border-bottom-width: 1px;
+}
+
 .stockInfoRow {
     display: grid;
     justify-content: center; /* Horizontal */
     align-content: top; /* Vertical */
-    height: 25%;
+    height: 20%;
     width: 100%;
     background-color: #000017;
     border-style: solid;
@@ -120,7 +132,14 @@ body {
     text-align: center;
     color: #B9B9B9;
     font-family: "Roboto Mono", monospace;
-    font-size: 140%;
+    font-size: 180%;
+}
+
+.searchBoxHolder {
+    display: grid;
+    justify-content: space-evenly; /* Horizontal */
+    align-content: top; /* Vertical */
+    text-align: center;
 }
 
 .stockBoxCategory {
@@ -135,6 +154,12 @@ body {
     color: #B9B9B9;
     font-family: "Roboto Mono", monospace;
     font-size: 180%;
+}
+
+.tickerName {
+    color: #B9B9B9;
+    font-family: "Roboto Mono", monospace;
+    font-size: 250%;
 }
 
 .stockValue {
