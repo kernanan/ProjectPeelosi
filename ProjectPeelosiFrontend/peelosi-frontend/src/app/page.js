@@ -6,10 +6,11 @@ import { useState, useEffect } from 'react'
 //const DynamicBarChart = dynamic(() => import('react-apexcharts'), { ssr: false });
 import DynamicBarChart from 'react-apexcharts'
 import { IconName } from "react-icons/fa";
-import {getMarketData} from 'APICaller'
+import {getMarketData, getTargetData} from 'APICaller'
 
-var targetName = 'Nancy Pelosi'
-var stockStats = {'ticker': 'META', 'Name': 'Meta Platforms Inc.', 'CurrentValue': '208.12'}
+var dateOption = '2W'
+var targetData = {'name': 'Nancy Pelosi'}
+var stockData = {'ticker': 'META', 'name': 'Meta Platforms Inc.', 'currentValue': '208.12'}
 var graphData = {'dateRange': ['07-01-2022', '08-01-2022', '09-01-2022', '10-01-2022', '11-01-2022', '12-01-2022', '01-01-2023', '02-01-2023', '03-01-2023', '04-01-2023', '05-01-2023', '06-01-2023', '07-01-2023'],
                 'stockMarket': [12, 19, 3, 5, 2, 3, 1, 1, 1, 1, 3, 5, 8],
                 'targetBuys': [5, null, null, 7, 8],
@@ -22,7 +23,7 @@ export default function Home() {
     <div className="homeContainer">
         <div className="mainContainer">
             <div className="titleContainer">
-                {projectHeader(targetName, "META")}
+                {projectHeader()}
             </div>
             <div className="dataContainer">
                 <div className="chartContainer">
@@ -30,30 +31,24 @@ export default function Home() {
                 </div>
                 <div className="controlPanelContainer">
                     <div className="stockPanel">
-                        <div className="stockInfoRow">
+                        <div className="stockInfoRowHead">
                             <h3 className="targetBoxTitle">Stock</h3>
-                            {stockName("Meta Platforms Inc.")}
+                            {stockSearchBox()}
                         </div>
                         <div className="stockInfoRow">
                             <h3 className="stockBoxCategory">Most Recent Value</h3>
-                            {stockWorth(208.12)}
+                            {stockWorth()}
                         </div>
                         <div className="stockInfoRow">
                             <h3 className="stockBoxCategory">Ticker</h3>
-                            {stockName("META")}
+                            {stockName()}
                         </div>
                         <div className="stockInfoRow">
                             <h3 className="stockBoxCategory">Timeline</h3>
                             {timelineOptions()}
                         </div>
                     </div>
-                    <div className="targetPanel">
-                        <h3 className="targetBoxTitle">Target</h3>
-                        {sampleTargetName("Nancy Pelosi")}
-                        {sampleTargetName("Mike Garcia")}
-                        {sampleTargetName("Paul Mitchell")}
-                        {targetSearchBar()}
-                    </div>
+                    {targetSearchBar()}
                 </div>
             </div>
         </div>
@@ -89,40 +84,52 @@ function timelineOptions() {
         let apiResponse = getMarketData('META', '2W')
         let dateRange = apiResponse['x']
         let marketData = apiResponse['y']
+        let value = apiResponse['currentValue']
         console.log(marketData)
         setStockMarketData(marketData)
         graphData['dateRange'] = dateRange
         graphData['stockMarket'] = marketData
+        stockData['currentValue'] = value
+        dateOption = '2W'
     }
 
     const get1MMarketData = () => {
         let apiResponse = getMarketData('META', '1M')
         let dateRange = apiResponse['x']
         let marketData = apiResponse['y']
+        let value = apiResponse['currentValue']
         console.log(marketData)
         setStockMarketData(marketData)
         graphData['dateRange'] = dateRange
         graphData['stockMarket'] = marketData
+        stockData['currentValue'] = value
+        dateOption = '1M'
     }
 
     const get1YMarketData = () => {
         let apiResponse = getMarketData('META', '1Y')
         let dateRange = apiResponse['x']
         let marketData = apiResponse['y']
+        let value = apiResponse['currentValue']
         console.log(marketData)
         setStockMarketData(marketData)
         graphData['dateRange'] = dateRange
         graphData['stockMarket'] = marketData
+        stockData['currentValue'] = value
+        dateOption = '1Y'
     }
 
     const get3YMarketData = () => {
         let apiResponse = getMarketData('META', '3Y')
         let dateRange = apiResponse['x']
         let marketData = apiResponse['y']
+        let value = apiResponse['currentValue']
         console.log(marketData)
         setStockMarketData(marketData)
         graphData['dateRange'] = dateRange
         graphData['stockMarket'] = marketData
+        stockData['currentValue'] = value
+        dateOption = '3Y'
     }
 
     return (
@@ -136,39 +143,133 @@ function timelineOptions() {
 }
 
 function targetSearchBar() {
+    const [currentTarget, setCurrentTarget] = useState(" ")
+    const [targetBuys, setTargetBuys] = useState([])
+    const [targetSells, setTargetSells] = useState([])
+
+    const handleInputTargetChange = (event) => {
+        setCurrentTarget(event.target.value);
+    }
+
+    const searchForNewTarget = () => {
+        let apiResponse = getTargetData(currentTarget, dateOption)
+        let buys = apiResponse['buys']
+        let sells = apiResponse['sells']
+        setCurrentTarget("")
+        targetData['name'] = currentTarget
+        setTargetBuys(buys)
+        setTargetSells(sells)
+        console.log(buys)
+        graphData['targetBuys'] = buys
+        graphData['targetSells'] = sells
+    }
+
+    const searchForPelosi = () => {
+        let apiResponse = getTargetData("Nancy Pelosi", dateOption)
+        let buys = apiResponse['buys']
+        let sells = apiResponse['sells']
+        setCurrentTarget("")
+        targetData['name'] = "Nancy Pelosi"
+        setTargetBuys(buys)
+        setTargetSells(sells)
+        console.log(buys)
+        graphData['targetBuys'] = buys
+        graphData['targetSells'] = sells
+    }
+    const searchForGarcia = () => {
+        let apiResponse = getTargetData("Mike Garcia", dateOption)
+        let buys = apiResponse['buys']
+        let sells = apiResponse['sells']
+        setCurrentTarget("")
+        targetData['name'] = "Mike Garcia"
+        setTargetBuys(buys)
+        setTargetSells(sells)
+        console.log(buys)
+        graphData['targetBuys'] = buys
+        graphData['targetSells'] = sells
+    }
+    const searchForSBuyer = () => {
+        let apiResponse = getTargetData("Stephen Buyer", dateOption)
+        let buys = apiResponse['buys']
+        let sells = apiResponse['sells']
+        setCurrentTarget("")
+        targetData['name'] = "Stephen Buyer"
+        setTargetBuys(buys)
+        setTargetSells(sells)
+        console.log(buys)
+        graphData['targetBuys'] = buys
+        graphData['targetSells'] = sells
+    }
+
     return (
-    <div class="box">
-        <form className="searchBox" name="search">
-            <input type="text" class="input" name="txt" onmouseout="this.value = ''; this.blur();" />
-        </form>
-    <button className="searchButton">Search</button>
-    </div>
+        <div className="targetPanel">
+            <h3 className="targetBoxTitle">Target</h3>
+            <button className="sampleTargetName" onClick={searchForPelosi}>Nancy Pelosi</button>
+            <button className="sampleTargetName" onClick={searchForGarcia}>Mike Garcia</button>
+            <button className="sampleTargetName" onClick={searchForSBuyer}>Stephen Buyer</button>
+            <div className="box">
+                <form className="searchBox" name="search">
+                    <input type="text" className="input" value={currentTarget}
+                    onChange={handleInputTargetChange} name="txt" onmouseout="this.value = ''; this.blur();" />
+                </form>
+                <button className="searchButton" onClick={searchForNewTarget}>Search</button>
+            </div>
+        </div>
+
     )
 }
 
-function stockName(name) {
+function stockSearchBox() {
+    const [currentStock, setCurrentStock] = useState("")
+
+    const handleInputStockChange = (event) => {
+        setCurrentStock(event.target.value);
+    }
+
+    const searchForNewTarget = () => {
+        let apiResponse = getMarketData(currentStock, dateOption)
+        let y = apiResponse['y']
+        let name = apiResponse['name']
+        let value = apiResponse['currentValue']
+        stockData['ticker'] = currentStock
+        setCurrentStock("")
+        stockData['name'] = name
+        graphData['stockMarket'] = y
+        stockData['currentValue'] = value
+    }
+
     return (
-        <h2 className="stockName">{name}</h2>
+        <div className="searchBoxHolder">
+            <h2 className="tickerName"><b>{stockData['ticker']}</b></h2>
+            <div className="box">
+            <form className="searchBox" name="search">
+                <input type="text" className="input" value={currentStock}
+                onChange={handleInputStockChange} name="txt" onmouseout="this.value = ''; this.blur();" />
+            </form>
+            <button className="searchButton" onClick={searchForNewTarget}>Search</button>
+            </div>
+        </div>
     )
 }
 
-function stockWorth(value) {
+function stockWorth() {
     return (
-        <h2 className="stockValue">{value}</h2>
+        <h2 className="stockValue">{stockData['currentValue']}</h2>
     )
 }
 
-function sampleTargetName(name) {
+function stockName() {
     return (
-        <h2 className="sampleTargetName">{name}</h2>
+        <h2 className="stockName">{stockData['name']}</h2>
     )
 }
 
-function projectHeader(politicianName, stockName) {
+function projectHeader() {
+    let disname = targetData['name']
     return (
         <div>
             <h1 className="projectTitle">You vs Pelosi</h1>
-            <h1 className="projectSubHeader">{stockName} stocks owned by {politicianName} against the market</h1>
+            <h1 className="projectSubHeader"><b>{stockData['ticker']}</b> stocks owned by <b>{disname}</b> against the market</h1>
         </div>
     )
 }
@@ -178,16 +279,6 @@ function politicianSearchBar() {
         <div>
             <button>bawls</button>
         </div>
-    )
-}
-
-function targetPanelChooser() {
-    return(
-<form>
-	<label for="search">Search</label>
-	<input id="search" type="search" pattern=".*\S.*" required />
-	<span class="caret"></span>
-</form>
     )
 }
 
@@ -245,6 +336,20 @@ function stockChart(){
                     colors: '#B9B9B9',
                 }
             },
+      },
+      {
+            title: {
+                text: 'Stock Quantity',
+                style: {
+                    color: '#CACACA',
+                }
+            },
+            labels: {
+                style: {
+                    colors: '#B9B9B9',
+                }
+            },
+            opposite: true
       }],
       legend: {
         labels: {
