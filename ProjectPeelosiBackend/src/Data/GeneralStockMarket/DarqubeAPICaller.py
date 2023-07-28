@@ -8,6 +8,19 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(current_dir)
 from StockMarketAPICaller import StockMarketAPICaller
 
+
+def reformatToStandard(historicalData):
+    index = 0
+    for data in historicalData:
+        if 'time' in data:
+            timestamp = data['time']
+            datetime_obj = datetime.datetime.fromtimestamp(timestamp)
+            formatted_date = datetime_obj.strftime("%m-%d-%Y")
+            historicalData[index]['time'] = formatted_date
+        index = index + 1
+    return historicalData
+
+
 class DarqubeAPICaller(StockMarketAPICaller):
 
     def __init__(self):
@@ -19,6 +32,7 @@ class DarqubeAPICaller(StockMarketAPICaller):
         marketDataFromTickerURL = 'https://api.darqube.com/data-api/market_data/historical/TSLA?token={0}&start_date={1}&end_date={2}&interval=1d'.format(self.authToken, fromDate, toDate)
         headers = {'accept': 'application/json'}
         historicalData = self.requestJSONByURL(marketDataFromTickerURL, headers=headers)
+        historicalData = reformatToStandard(historicalData)
         return historicalData
 
     def convertToUnixTime(self, initialDate):

@@ -64,13 +64,38 @@ body {
     width: 80%;
     align-content: space-evenly;
     grid-template-columns: 7fr 3fr;
+}
 
+.graphModeContainer {
+    transform: translate(10%, 220%);
+}
+
+.switchGraphText {
+    color: #B9B9B9;
+    font-family: "Courier New", monospace;
+    font-size: 180%
+}
+
+.switchGraphButton {
+}
+.switchGraphButton:hover {
+    color: #3A0080;
+    font-size: 100%;
+    transition: .5s;
 }
 
 .chartContainer {
+    display: grid;
     width: 100%;
     float: center;
+}
 
+.asdf {
+    height: 20%;
+}
+
+#apexchartsline {
+    display: hidden;
 }
 
 .controlPanelContainer {
