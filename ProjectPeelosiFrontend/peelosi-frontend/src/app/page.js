@@ -4,26 +4,28 @@ import Image from 'next/image'
 import dynamic from 'next/dynamic';
 import { useState, useEffect } from 'react'
 //const DynamicBarChart = dynamic(() => import('react-apexcharts'), { ssr: false });
-import DynamicBarChart from 'react-apexcharts'
+import Chart from 'react-apexcharts'
+//import {VictoryArea, VictoryBar, VictoryGroup} from 'victory'
 import { IconName } from "react-icons/fa";
-import {getMarketData, getTargetData} from 'APICaller'
+import {getMarketData, getTargetData, getStocksBoughtByData} from 'src/app/HardcodedAPICaller'
+//import {getMarketData, getTargetData} from 'src/app/APICaller'
 
 var dateOption = '2W'
-var targetData = {'name': 'Nancy Pelosi'}
+var targetData = {'name': 'Nancy Pelosi', 'values': [[],[]]}
 var stockData = {'ticker': 'META', 'name': 'Meta Platforms Inc.', 'currentValue': '208.12'}
-var graphData = {'dateRange': ['07-01-2022', '08-01-2022', '09-01-2022', '10-01-2022', '11-01-2022', '12-01-2022', '01-01-2023', '02-01-2023', '03-01-2023', '04-01-2023', '05-01-2023', '06-01-2023', '07-01-2023'],
-                'stockMarket': [12, 19, 3, 5, 2, 3, 1, 1, 1, 1, 3, 5, 8],
-                'targetBuys': [5, null, null, 7, 8],
-                'targetSells': [3, null, 6, null, null, null, null, 4]}
-
+var singleTargetMode = true
+var graphData = {'dateOption': '2W',
+                 'seriesData': getMarketData('asdf', '2W')}
+var secondaryGraphData = {}
 var counter = 0
 
 export default function Home() {
   return (
     <div className="homeContainer">
         <div className="mainContainer">
-            <div className="titleContainer">
-                {projectHeader()}
+            {projectHeader()}
+            <div className="graphModeContainer">
+                {graphSwitcher()}
             </div>
             <div className="dataContainer">
                 <div className="chartContainer">
@@ -55,6 +57,37 @@ export default function Home() {
 
     </div>
   )
+}
+
+function graphSwitcher() {
+    const [oneTargetView, setTargetView] = useState(true)
+
+    const switchMode = () => {
+        console.log(getStocksBoughtByData('A', 'asdf'))
+        if (oneTargetView == true) {
+            let next = false
+            setTargetView(next)
+            singleTargetMode = next
+
+        }
+        else {
+            let next = true
+            setTargetView(next)
+            singleTargetMode = next
+        }
+
+    }
+
+    if (oneTargetView == true) {
+        return(
+            <div className="switchGraphText"><b>Switch To: <button className="switchGraphButton" onClick={switchMode}>Multi Target Mode</button></b></div>
+        )
+    } else {
+        return(
+            <div className="switchGraphText"><b>Switch To: <button className="switchGraphButton" onClick={switchMode}>Single Target Mode</button></b></div>
+        )
+    }
+
 }
 
 function countButton() {
@@ -143,12 +176,15 @@ function timelineOptions() {
 }
 
 function targetSearchBar() {
+
     const [currentTarget, setCurrentTarget] = useState(" ")
-    const [targetBuys, setTargetBuys] = useState([])
-    const [targetSells, setTargetSells] = useState([])
 
     const handleInputTargetChange = (event) => {
         setCurrentTarget(event.target.value);
+    }
+
+    if(!singleTargetMode){
+        return (<div></div>)
     }
 
     const searchForNewTarget = () => {
@@ -166,39 +202,19 @@ function targetSearchBar() {
 
     const searchForPelosi = () => {
         let apiResponse = getTargetData("Nancy Pelosi", dateOption)
-        let buys = apiResponse['buys']
-        let sells = apiResponse['sells']
-        setCurrentTarget("")
-        targetData['name'] = "Nancy Pelosi"
-        setTargetBuys(buys)
-        setTargetSells(sells)
-        console.log(buys)
-        graphData['targetBuys'] = buys
-        graphData['targetSells'] = sells
+        let newSeries = {'name': 'Nancy Pelosi', 'values': [apiResponse[0], apiResponse[1]]}
+        setCurrentTarget(newSeries)
+        targetData = newSeries
     }
     const searchForGarcia = () => {
         let apiResponse = getTargetData("Mike Garcia", dateOption)
-        let buys = apiResponse['buys']
-        let sells = apiResponse['sells']
-        setCurrentTarget("")
-        targetData['name'] = "Mike Garcia"
-        setTargetBuys(buys)
-        setTargetSells(sells)
-        console.log(buys)
-        graphData['targetBuys'] = buys
-        graphData['targetSells'] = sells
+        console.log(apiResponse)
+        let newSeries = {'name': 'Mike Garcia', 'values': [apiResponse[0], apiResponse[1]]}
+        setCurrentTarget(newSeries)
+        targetData = newSeries
     }
     const searchForSBuyer = () => {
         let apiResponse = getTargetData("Stephen Buyer", dateOption)
-        let buys = apiResponse['buys']
-        let sells = apiResponse['sells']
-        setCurrentTarget("")
-        targetData['name'] = "Stephen Buyer"
-        setTargetBuys(buys)
-        setTargetSells(sells)
-        console.log(buys)
-        graphData['targetBuys'] = buys
-        graphData['targetSells'] = sells
     }
 
     return (
@@ -267,7 +283,7 @@ function stockName() {
 function projectHeader() {
     let disname = targetData['name']
     return (
-        <div>
+        <div className= "titleContainer">
             <h1 className="projectTitle">You vs Pelosi</h1>
             <h1 className="projectSubHeader"><b>{stockData['ticker']}</b> stocks owned by <b>{disname}</b> against the market</h1>
         </div>
@@ -283,111 +299,240 @@ function politicianSearchBar() {
 }
 
 function stockChart(){
-    var series = [
-      {
-        name: 'Stock Market',
-        type: 'area',
-        data: graphData['stockMarket'],
-      },
-      {
-        name: 'Target Buys',
-        type: 'column',
-        data: graphData['targetBuys'],
-      },
-      {
-        name: 'Target Sells',
-        type: 'column',
-        data: graphData['targetSells'],
-      }
-    ];
-
-    var options = {
-      chart: {
-        id: 'line',
-        stacked: false,
-        toolbar: {
-            show: false,
-        }
-      },
-      dataLabels: {
-        enabled: true,
-        enabledOnSeries: [1, 2]
-      },
-      xaxis: {
-            axisTicks: {
-                show: false
-            },
-            labels: {
-                style: {
-                    colors: '#B9B9B9'
-                }
-            },
-            categories: graphData['dateRange'],
-      },
-      yaxis: [{
-            title: {
-                text: 'USD Worth',
-                style: {
-                    color: '#CACACA',
-                }
-            },
-            labels: {
-                style: {
-                    colors: '#B9B9B9',
-                }
-            },
-      },
-      {
-            title: {
-                text: 'Stock Quantity',
-                style: {
-                    color: '#CACACA',
-                }
-            },
-            labels: {
-                style: {
-                    colors: '#B9B9B9',
-                }
-            },
-            opposite: true
-      }],
-      legend: {
-        labels: {
-            colors: '#CACACA',
-            show: true
-        }
-      },
-      colors: ['#3A0080', '#003c00', '#460000'],
-        fill: {
-          type: 'gradient',
-          gradient: {
-            opacityFrom: 1,
-            opacityTo: 0.6,
-            type: "vertical"
+    if (singleTargetMode == true) {
+        var series = [
+//          {
+//            name: 'Stock Market',
+//            type: 'area',
+//            data: graphData['seriesData'],
+//          },
+          {
+            name: 'Target Buys',
+            type: 'column',
+            data: targetData['values'][0],
+          },
+          {
+            name: 'Target Sells',
+            type: 'column',
+            data: targetData['values'][1],
           }
-        },
-      stroke: {
-        width: [0,0,0]
-      },
-      plotOptions: {
-        line: {
-            columnWidth: "10%",
-                  dataLabels: {
-                    position: 'top', // Display the bar values on top of the bars
-                    enabled: true, // Enable data labels on hover
-                  },
-        },
-        bar: {
-            dataLabels: {
-                position: 'bottom'
-            }
-        }
-      },
-    };
+        ];
 
-    return (
-      <div>
-        <DynamicBarChart options={options} series={series} />
-      </div>
-    );
+        var options = {
+          chart: {
+            id: 'area',
+            stacked: false,
+            toolbar: {
+                show: false,
+            }
+          },
+          dataLabels: {
+            enabled: true,
+            enabledOnSeries: [1, 2],
+            formatter: function(val, opt) {
+                if (val != null) {
+                    return val
+                }
+            }
+          },
+          xaxis: {
+                axisTicks: {
+                    show: false
+                },
+                labels: {
+                    style: {
+                        colors: '#B9B9B9'
+                    },
+                    datetimeUTC: false,
+                    format: 'MMM-DD-yyyy'
+                },
+                categories: 'datetime',
+
+          },
+          yaxis: [{
+                title: {
+                    text: 'USD Worth',
+                    style: {
+                        color: '#CACACA',
+                    }
+                },
+                labels: {
+                    style: {
+                        colors: '#B9B9B9',
+                    }
+                },
+          },
+          {
+                title: {
+                    text: 'Stock Quantity',
+                    style: {
+                        color: '#CACACA',
+                    }
+                },
+                labels: {
+                    style: {
+                        colors: '#B9B9B9',
+                    }
+                },
+                opposite: true
+          }],
+          legend: {
+            labels: {
+                colors: '#CACACA',
+                show: true
+            }
+          },
+          colors: ['#3A0080', '#003c00', '#460000'],
+            fill: {
+              type: 'gradient',
+              gradient: {
+                opacityFrom: 1,
+                opacityTo: 0.6,
+                type: "vertical"
+              }
+            },
+          stroke: {
+            width: [0,0,0]
+          },
+          plotOptions: {
+            line: {
+                columnWidth: "10%",
+                      dataLabels: {
+                        position: 'top', // Display the bar values on top of the bars
+                        enabled: true, // Enable data labels on hover
+                      },
+            },
+            bar: {
+                dataLabels: {
+                    position: 'bottom'
+                }
+            }
+          },
+        };
+
+        console.log(Date.parse("07-20-2023"))
+
+        return (
+          <div>
+            <Chart options={options} series={series} />
+          </div>
+        );
+    } else {
+          var seriesData = getStocksBoughtByData('asdf', 'asfd')
+          var series = [
+
+          ];
+          series.push({name: 'marketData',
+                       type: 'area',
+                       data: graphData['seriesData']})
+
+        var barColors = ['#3A0080']
+        for (let i = 0; i < seriesData[0].length; i++) {
+            series.push(seriesData[0][i])
+            barColors.push('#003c00')
+        }
+        for (let i = 0; i < seriesData[1].length; i++) {
+            series.push(seriesData[1][i])
+            barColors.push('#460000')
+        }
+        console.log(series)
+
+        var options = {
+          chart: {
+            id: 'line',
+            stacked: false,
+            toolbar: {
+                show: false,
+            }
+          },
+          dataLabels: {
+            enabled: true,
+            enabledOnSeries: [1, 2],
+            formatter: function(val, opt) {
+                if (val != null) {
+                    return val
+                }
+            }
+          },
+          xaxis: {
+                axisTicks: {
+                    show: false
+                },
+                labels: {
+                    style: {
+                        colors: '#B9B9B9'
+                    }
+                },
+                categories: graphData['dateRange'],
+                type: "datetime"
+          },
+          yaxis: [{
+                title: {
+                    text: 'USD Worth',
+                    style: {
+                        color: '#CACACA',
+                    }
+                },
+                labels: {
+                    style: {
+                        colors: '#B9B9B9',
+                    }
+                },
+          },
+          {
+                title: {
+                    text: 'Stock Quantity',
+                    style: {
+                        color: '#CACACA',
+                    }
+                },
+                labels: {
+                    style: {
+                        colors: '#B9B9B9',
+                    }
+                },
+                opposite: true
+          }],
+          legend: {
+            labels: {
+                colors: '#CACACA',
+                show: true
+            }
+          },
+          colors: barColors,
+            fill: {
+              type: 'gradient',
+              gradient: {
+                opacityFrom: 1,
+                opacityTo: 0.6,
+                type: "vertical"
+              }
+            },
+          stroke: {
+            width: [0,0,0]
+          },
+          plotOptions: {
+            line: {
+                columnWidth: "10%",
+                      dataLabels: {
+                        position: 'top', // Display the bar values on top of the bars
+                        enabled: true, // Enable data labels on hover
+                      },
+            },
+            bar: {
+                dataLabels: {
+                    position: 'bottom'
+                }
+            }
+          },
+        };
+
+
+        return (
+              <div>
+                <Chart options={options} series={series} />
+              </div>
+        );
+    }
+
  }

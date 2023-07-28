@@ -9,6 +9,10 @@ class StockMarketAPICaller(ABC):
     def getHistoricalStockData(self, tickerId, fromDate, toDate):
         pass
 
+    @abstractmethod
+    def reformatToStandard(self, historicalData):
+        pass
+
     def requestJSONByURL(self, url, headers):
         response = requests.get(url, headers=headers)
         json_obj = response.content

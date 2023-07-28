@@ -2,7 +2,7 @@ export const getMarketData = (ticker, timeOption) => {
     if (timeOption == '2W') {
         let dateRange = getDateRange(13)
         return {'x': dateRange,
-                'y': [12, 19, 10, 14, 8, 16, 12, 9, 10, 17, 13, 9, 8],
+                'y': [12, 1, 10, 14, 8, 16, 12, 9, 10, 17, 13, 9, 8],
                 'name': 'META Platforms Inc.',
                 'currentValue': 8};
     }
