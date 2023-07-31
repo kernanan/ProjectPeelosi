@@ -10,7 +10,7 @@ class APICaller(ABC):
     def getStockTrades(self, tickerId, fromTransactionDate, toTransactionDate):
         pass
     @abstractmethod
-    def getPoliticianTrades(self, politicianName, fromTransactionDate, toTransactionDate):
+    def getPoliticianTradesOnAStock(self, politicianName, tickerId, fromTransactionDate, toTransactionDate):
         pass
 
     def requestJSONByURL(self, url, headers):

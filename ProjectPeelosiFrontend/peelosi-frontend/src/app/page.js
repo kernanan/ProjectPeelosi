@@ -15,7 +15,7 @@ var targetData = {'name': 'Nancy Pelosi', 'values': [[],[]]}
 var stockData = {'ticker': 'META', 'name': 'Meta Platforms Inc.', 'currentValue': '208.12'}
 var singleTargetMode = true
 var graphData = {'dateOption': '2W',
-                 'seriesData': getMarketData('asdf', '2W')}
+                 'seriesData': getMarketData('asdf', '2W')['seriesData']}
 var secondaryGraphData = {}
 var counter = 0
 
@@ -68,7 +68,6 @@ function graphSwitcher() {
             let next = false
             setTargetView(next)
             singleTargetMode = next
-
         }
         else {
             let next = true
@@ -115,26 +114,22 @@ function timelineOptions() {
 
     const get2WMarketData = () => {
         let apiResponse = getMarketData('META', '2W')
-        let dateRange = apiResponse['x']
-        let marketData = apiResponse['y']
         let value = apiResponse['currentValue']
-        console.log(marketData)
-        setStockMarketData(marketData)
-        graphData['dateRange'] = dateRange
-        graphData['stockMarket'] = marketData
+        let seriesD = apiResponse['seriesData']
+        console.log(seriesD)
+        setStockMarketData(seriesD)
+        graphData['seriesData'] = seriesD
         stockData['currentValue'] = value
         dateOption = '2W'
     }
 
     const get1MMarketData = () => {
         let apiResponse = getMarketData('META', '1M')
-        let dateRange = apiResponse['x']
-        let marketData = apiResponse['y']
         let value = apiResponse['currentValue']
-        console.log(marketData)
-        setStockMarketData(marketData)
-        graphData['dateRange'] = dateRange
-        graphData['stockMarket'] = marketData
+        let seriesD = apiResponse['seriesData']
+        console.log(seriesD)
+        setStockMarketData(seriesD)
+        graphData['seriesData'] = seriesD
         stockData['currentValue'] = value
         dateOption = '1M'
     }
@@ -244,13 +239,13 @@ function stockSearchBox() {
 
     const searchForNewTarget = () => {
         let apiResponse = getMarketData(currentStock, dateOption)
-        let y = apiResponse['y']
-        let name = apiResponse['name']
         let value = apiResponse['currentValue']
+        let name = apiResponse['name']
+        let seriesD = apiResponse['seriesData']
         stockData['ticker'] = currentStock
         setCurrentStock("")
         stockData['name'] = name
-        graphData['stockMarket'] = y
+        graphData['seriesData'] = seriesD
         stockData['currentValue'] = value
     }
 
@@ -301,19 +296,19 @@ function politicianSearchBar() {
 function stockChart(){
     if (singleTargetMode == true) {
         var series = [
-//          {
-//            name: 'Stock Market',
-//            type: 'area',
-//            data: graphData['seriesData'],
-//          },
+          {
+            name: 'marketData',
+            type: 'area',
+            data: graphData['seriesData']
+          },
           {
             name: 'Target Buys',
-            type: 'column',
+            type: "column",
             data: targetData['values'][0],
           },
           {
             name: 'Target Sells',
-            type: 'column',
+            type: "column",
             data: targetData['values'][1],
           }
         ];
@@ -344,9 +339,8 @@ function stockChart(){
                         colors: '#B9B9B9'
                     },
                     datetimeUTC: false,
-                    format: 'MMM-DD-yyyy'
                 },
-                categories: 'datetime',
+                type: 'datetime',
 
           },
           yaxis: [{
@@ -410,8 +404,6 @@ function stockChart(){
           },
         };
 
-        console.log(Date.parse("07-20-2023"))
-
         return (
           <div>
             <Chart options={options} series={series} />
@@ -420,7 +412,6 @@ function stockChart(){
     } else {
           var seriesData = getStocksBoughtByData('asdf', 'asfd')
           var series = [
-
           ];
           series.push({name: 'marketData',
                        type: 'area',
@@ -463,7 +454,6 @@ function stockChart(){
                         colors: '#B9B9B9'
                     }
                 },
-                categories: graphData['dateRange'],
                 type: "datetime"
           },
           yaxis: [{

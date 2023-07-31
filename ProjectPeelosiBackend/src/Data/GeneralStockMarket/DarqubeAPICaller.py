@@ -9,16 +9,7 @@ sys.path.append(current_dir)
 from StockMarketAPICaller import StockMarketAPICaller
 
 
-def reformatToStandard(historicalData):
-    index = 0
-    for data in historicalData:
-        if 'time' in data:
-            timestamp = data['time']
-            datetime_obj = datetime.datetime.fromtimestamp(timestamp)
-            formatted_date = datetime_obj.strftime("%m-%d-%Y")
-            historicalData[index]['time'] = formatted_date
-        index = index + 1
-    return historicalData
+
 
 
 class DarqubeAPICaller(StockMarketAPICaller):
@@ -32,13 +23,27 @@ class DarqubeAPICaller(StockMarketAPICaller):
         marketDataFromTickerURL = 'https://api.darqube.com/data-api/market_data/historical/TSLA?token={0}&start_date={1}&end_date={2}&interval=1d'.format(self.authToken, fromDate, toDate)
         headers = {'accept': 'application/json'}
         historicalData = self.requestJSONByURL(marketDataFromTickerURL, headers=headers)
-        historicalData = reformatToStandard(historicalData)
+        historicalData = self.reformatToStandard(historicalData)
         return historicalData
 
     def convertToUnixTime(self, initialDate):
         dateObj = datetime.datetime.strptime(initialDate, "%Y-%m-%d")
         unixTime = int(dateObj.timestamp())
         return unixTime
+
+    def reformatToStandard(self, historicalData):
+        reformatted = {}
+        index = 0
+        for data in historicalData:
+            if 'time' in data:
+                timestamp = data['time']
+                datetime_obj = datetime.datetime.fromtimestamp(timestamp)
+                formatted_date = datetime_obj.strftime("%m-%d-%Y")
+                historicalData[index]['time'] = formatted_date
+                reformatted[formatted_date] = historicalData[index]
+            index = index + 1
+
+        return reformatted
 
     def main(self):
         result = self.getHistoricalStockData("TSLA", "2023-06-25", "2023-06-30")

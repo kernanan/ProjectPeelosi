@@ -32,24 +32,11 @@ targetTracker = TargetTracker(siteToSourcePoliticianData)
 siteToSourceStockMarketData = 'Darqube'
 marketTracker = StockMarketTracker(siteToSourceStockMarketData)
 
-
-@app.route('/addTrackedPolitician')
-def addTrackedPolitician():
-    name = request.args.get('name')
-    name = unquote(name)
-    userId = request.args.get('userId')
-    userId = unquote(userId)
-    print(f'TODO: add {name} to user {userId}')
-    return name
-
-@app.route('/getTrackedPoliticians')
-def getTrackedPoliticians():
-    print('TODO: get tracked politicians')
-    return 'TODO: get tracked politicians'
-
-@app.route('/getPoliticianHistorical/<targetName>')
-def getPoliticiansHistoricalTrades(targetName):
+@app.route('/getPoliticianHistoricalOnTicker/<targetName>/<tickerId>')
+def getPoliticiansHistoricalTrades(targetName, tickerId):
     if targetName is None:
+        return 'No politician provided'
+    if tickerId is None:
         return 'No politician provided'
     fromDate = request.args.get('fromDate')
     toDate = request.args.get('toDate')
@@ -58,7 +45,7 @@ def getPoliticiansHistoricalTrades(targetName):
     if toDate is None:
         toDate = getTodaysDate()
     print(f'Received Request for {targetName} trading history from {fromDate} to {toDate}')
-    return targetTracker.getStatisticsOnPolitician(targetName, fromDate, toDate)
+    return targetTracker.getStatisticsOnPolitician(targetName, tickerId, fromDate, toDate)
 
 @app.route('/getStockTradesHistorical/<tickerId>')
 def getStockTradesHistorical(tickerId):
