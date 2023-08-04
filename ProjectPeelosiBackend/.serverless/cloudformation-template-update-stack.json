@@ -162,7 +162,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/ProjectPeelosiBackend/dev/1689015453589-2023-07-10T18:57:33.589Z/ProjectPeelosiBackend.zip"
+          "S3Key": "serverless/ProjectPeelosiBackend/dev/1691102625645-2023-08-03T22:43:45.645Z/ProjectPeelosiBackend.zip"
         },
         "Handler": "wsgi_handler.handler",
         "Runtime": "python3.9",
@@ -180,14 +180,14 @@
         "ApiLogGroup"
       ]
     },
-    "ApiLambdaVersionlCYSop1OLazq3GJ0kesBxZpnF88vL5xRCcRTUeDls": {
+    "ApiLambdaVersiondFeiZcbtgE3epwvGPskZk21vHAQ1AT3fgTpMQH15d0": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ApiLambdaFunction"
         },
-        "CodeSha256": "V8h18coCz0V0T7pfR9pyAgd7PA1aD3O0mOlzDJ/VvNk="
+        "CodeSha256": "L0KoB7OMg1z897MdLyend4kSC/Jz9rMzqYbbjGL20AE="
       }
     },
     "HttpApi": {
@@ -298,7 +298,7 @@
     "ApiLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ApiLambdaVersionlCYSop1OLazq3GJ0kesBxZpnF88vL5xRCcRTUeDls"
+        "Ref": "ApiLambdaVersiondFeiZcbtgE3epwvGPskZk21vHAQ1AT3fgTpMQH15d0"
       },
       "Export": {
         "Name": "sls-ProjectPeelosiBackend-dev-ApiLambdaFunctionQualifiedArn"

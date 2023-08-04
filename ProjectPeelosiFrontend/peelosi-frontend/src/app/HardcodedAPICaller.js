@@ -1,6 +1,6 @@
 
 
-export const getMarketData = (ticker, timeOption) => {
+export async function getMarketData(ticker, timeOption) {
     if (timeOption == '2W') {
         let data = {"07-14-2023": {
               "open": 268.65,
@@ -81,7 +81,8 @@ export const getMarketData = (ticker, timeOption) => {
             let thisIndex = {x: key, y: value['open']}
             marketSeriesData.push(thisIndex)
         }
-        return {name: 'META Platforms Inc.',
+        return {tick: ticker,
+                name: 'META Platforms Inc.',
                 currentValue: 244,
                 seriesData: marketSeriesData}
     }
@@ -188,7 +189,7 @@ export const getMarketData = (ticker, timeOption) => {
                 currentValue: 244,
                 seriesData: marketSeriesData}
     }
-    if (timeOption == '1Y') {
+    if (timeOption == '6M') {
         let dateRange = getDateRange(365)
         return {'x': dateRange,
                 'y': [12, 19, 10, 14, 8, 16, 12, 9, 10, 17, 13, 9, 8],
@@ -310,7 +311,9 @@ export const getTargetData = (name, timeOption) => {
 
 export const getStocksBoughtByData = (ticker, timeOption) => {
     var newSeries = []
-    var data =  {
+    var data = {}
+    if(timeOption == '2W'){
+        data = {
         "Baglino Andrew D": [
           {
             "change": -6690,
@@ -338,7 +341,38 @@ export const getStocksBoughtByData = (ticker, timeOption) => {
             "transactionCode": "S",
             "transactionPrice": 615.75
           }
-        ]
+        ]}
+    }
+    else {
+        data = {
+        "bbbbb": [
+          {
+            "change": 3456,
+            "filingDate": "07-20-2023",
+            "name": "Baglino Andrew D",
+            "symbol": "TSLA",
+            "transactionCode": "M",
+            "transactionDate": "07-25-2023"
+          }
+        ],
+        "cdcdcdcd": [
+          {
+            "share": 57234,
+            "change": -1250,
+            "filingDate": "07-21-2023",
+            "transactionDate": "07-27-2023",
+            "transactionCode": "S",
+            "transactionPrice": 655.81
+          },
+          {
+            "share": 19114,
+            "change": 500,
+            "filingDate": "07-23-2023",
+            "transactionDate": "07-28-2023",
+            "transactionCode": "S",
+            "transactionPrice": 615.75
+          }
+        ]}
     }
 
     var allSeriesBuyData = []
@@ -383,6 +417,5 @@ const getDateRange = (lastXDays) => {
         dateRange.push(dateString)
 
     }
-    console.log(dateRange)
     return dateRange
 }

@@ -6,7 +6,7 @@ from Domain.StockMarketTracker import StockMarketTracker
 from Domain.TargetTracker import TargetTracker
 
 def main():
-    siteToSourceData = 'Benzinga'
+    siteToSourceData = 'Finnhub'
     tracker = TargetTracker(siteToSourceData)
     dataOnTrackedPoliticians = tracker.getStatisticsOnPolitician('Mike Garcia', 'TSLA', '2023-05-01', '2023-06-21')
     print(dataOnTrackedPoliticians)

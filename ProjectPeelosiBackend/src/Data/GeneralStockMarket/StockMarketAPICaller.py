@@ -20,5 +20,5 @@ class StockMarketAPICaller(ABC):
         return data
 
     def convertDateStringIntoDateTime(self, datestring):
-        datetime_obj = datetime.strptime(datestring, "%Y-%m-%d")
+        datetime_obj = datetime.strptime(datestring, "%m-%d-%Y")
         return datetime_obj

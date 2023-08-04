@@ -19,7 +19,7 @@ class BenzingaAPICaller(APICaller):
         dataEntriesFilteredByTicker = self.filterDataByTicker(tickerId, fromTransactionDate, toTransactionDate, jsonData)
         return dataEntriesFilteredByTicker
 
-    def getPoliticianTradesOnAStock(self, politicianName, fromTransactionDate, toTransactionDate):
+    def getPoliticianTradesOnAStock(self, politicianName, tickerId, fromTransactionDate, toTransactionDate):
         getAllGovernmentTradesURL = 'https://api.benzinga.com/api/v1/gov/usa/congress/trades?token={0}'.format(self.authToken)
         headers = {'accept': 'application/json'}
         print(getAllGovernmentTradesURL)
