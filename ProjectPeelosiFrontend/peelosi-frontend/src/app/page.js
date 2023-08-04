@@ -2,20 +2,21 @@
 
 import Image from 'next/image'
 import dynamic from 'next/dynamic';
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback} from 'react'
 //const DynamicBarChart = dynamic(() => import('react-apexcharts'), { ssr: false });
 import Chart from 'react-apexcharts'
 //import {VictoryArea, VictoryBar, VictoryGroup} from 'victory'
 import { IconName } from "react-icons/fa";
-import {getMarketData, getTargetData, getStocksBoughtByData} from 'src/app/HardcodedAPICaller'
-//import {getMarketData, getTargetData} from 'src/app/APICaller'
+import {getMarketData, getTargetData, getStocksBoughtByData} from 'src/app/APICaller'
 
 var dateOption = '2W'
 var targetData = {'name': 'Nancy Pelosi', 'values': [[],[]]}
-var stockData = {'ticker': 'META', 'name': 'Meta Platforms Inc.', 'currentValue': '208.12'}
-var singleTargetMode = true
+var targetsData = []
+var stockData = {'ticker': 'TSLA', 'name': 'TSLA', 'currentValue': '208.12'}
+var singleTargetMode = false
 var graphData = {'dateOption': '2W',
-                 'seriesData': getMarketData('asdf', '2W')['seriesData']}
+                 'seriesData': {},
+                 'barData': []}
 var secondaryGraphData = {}
 var counter = 0
 
@@ -24,9 +25,6 @@ export default function Home() {
     <div className="homeContainer">
         <div className="mainContainer">
             {projectHeader()}
-            <div className="graphModeContainer">
-                {graphSwitcher()}
-            </div>
             <div className="dataContainer">
                 <div className="chartContainer">
                     {stockChart()}
@@ -63,7 +61,7 @@ function graphSwitcher() {
     const [oneTargetView, setTargetView] = useState(true)
 
     const switchMode = () => {
-        console.log(getStocksBoughtByData('A', 'asdf'))
+//        console.log(getStocksBoughtByData(stockData['ticker'], dateOption))
         if (oneTargetView == true) {
             let next = false
             setTargetView(next)
@@ -109,33 +107,89 @@ function displayButton() {
     )
 }
 
+
 function timelineOptions() {
     const [stockMarketData, setStockMarketData] = useState([])
+    const [isSending, setIsSending] = useState(false)
 
-    const get2WMarketData = () => {
-        let apiResponse = getMarketData('META', '2W')
+    const get2WMarketData = useCallback(async() => {
+        if (isSending) return
+        setIsSending(true)
+        let apiResponse = await getMarketData(stockData['ticker'], '2W')
+        let apiResponse2 = await getStocksBoughtByData(stockData['ticker'], '2W')
+        setIsSending(false)
         let value = apiResponse['currentValue']
         let seriesD = apiResponse['seriesData']
-        console.log(seriesD)
-        setStockMarketData(seriesD)
+
         graphData['seriesData'] = seriesD
         stockData['currentValue'] = value
         dateOption = '2W'
-    }
+//        setStockMarketData(seriesD)
 
-    const get1MMarketData = () => {
-        let apiResponse = getMarketData('META', '1M')
+        var barColors = ['#3A0080']
+        console.log('will error if undefined at this point')
+        console.log(apiResponse2)
+        var series = []
+        for (let i = 0; i < apiResponse2[0].length; i++) {
+                series.push(apiResponse2[0][i])
+                barColors.push('#003c00')
+        }
+        for (let i = 0; i < apiResponse2[1].length; i++) {
+                series.push(apiResponse2[1][i])
+                barColors.push('#460000')
+        }
+        graphData['barData'] = barColors
+        targetsData = series
+
+
+    }, [isSending])
+
+    const get1MMarketData = useCallback(async() => {
+        if (isSending) return
+        setIsSending(true)
+        let apiResponse = await getMarketData(stockData['ticker'], '1M')
+        let apiResponse2 = await getStocksBoughtByData(stockData['ticker'], '1M')
+        setIsSending(false)
         let value = apiResponse['currentValue']
         let seriesD = apiResponse['seriesData']
-        console.log(seriesD)
-        setStockMarketData(seriesD)
+
         graphData['seriesData'] = seriesD
         stockData['currentValue'] = value
         dateOption = '1M'
+//        setStockMarketData(seriesD)
+
+        var barColors = ['#3A0080']
+        console.log('will error if undefined at this point')
+        console.log(apiResponse2)
+        var series = []
+        for (let i = 0; i < apiResponse2[0].length; i++) {
+                series.push(apiResponse2[0][i])
+                barColors.push('#003c00')
+        }
+        for (let i = 0; i < apiResponse2[1].length; i++) {
+                series.push(apiResponse2[1][i])
+                barColors.push('#460000')
+        }
+        graphData['barData'] = barColors
+        targetsData = series
+
+    }, [isSending])
+
+    const get6MMarketData = () => {
+        let apiResponse = getMarketData(stockData['ticker'], '6M')
+        let dateRange = apiResponse['x']
+        let marketData = apiResponse['y']
+        let value = apiResponse['currentValue']
+        console.log(marketData)
+        setStockMarketData(marketData)
+        graphData['dateRange'] = dateRange
+        graphData['stockMarket'] = marketData
+        stockData['currentValue'] = value
+        dateOption = '6M'
     }
 
     const get1YMarketData = () => {
-        let apiResponse = getMarketData('META', '1Y')
+        let apiResponse = getMarketData(stockData['ticker'], '1Y')
         let dateRange = apiResponse['x']
         let marketData = apiResponse['y']
         let value = apiResponse['currentValue']
@@ -147,31 +201,17 @@ function timelineOptions() {
         dateOption = '1Y'
     }
 
-    const get3YMarketData = () => {
-        let apiResponse = getMarketData('META', '3Y')
-        let dateRange = apiResponse['x']
-        let marketData = apiResponse['y']
-        let value = apiResponse['currentValue']
-        console.log(marketData)
-        setStockMarketData(marketData)
-        graphData['dateRange'] = dateRange
-        graphData['stockMarket'] = marketData
-        stockData['currentValue'] = value
-        dateOption = '3Y'
-    }
-
     return (
     <div className="timelineOptionContainer">
         <button className="timelineOption" onClick={get2WMarketData}>2W</button>
         <button className="timelineOption" onClick={get1MMarketData}>1M</button>
+        <button className="timelineOption" onClick={get6MMarketData}>6M</button>
         <button className="timelineOption" onClick={get1YMarketData}>1Y</button>
-        <button className="timelineOption" onClick={get3YMarketData}>3Y</button>
     </div>
     )
 }
 
 function targetSearchBar() {
-
     const [currentTarget, setCurrentTarget] = useState(" ")
 
     const handleInputTargetChange = (event) => {
@@ -183,7 +223,7 @@ function targetSearchBar() {
     }
 
     const searchForNewTarget = () => {
-        let apiResponse = getTargetData(currentTarget, dateOption)
+        let apiResponse = getTargetData(currentTarget, stockData['ticker'], dateOption)
         let buys = apiResponse['buys']
         let sells = apiResponse['sells']
         setCurrentTarget("")
@@ -196,20 +236,20 @@ function targetSearchBar() {
     }
 
     const searchForPelosi = () => {
-        let apiResponse = getTargetData("Nancy Pelosi", dateOption)
+        let apiResponse = getTargetData("Nancy Pelosi", stockData['ticker'], dateOption)
         let newSeries = {'name': 'Nancy Pelosi', 'values': [apiResponse[0], apiResponse[1]]}
         setCurrentTarget(newSeries)
         targetData = newSeries
     }
     const searchForGarcia = () => {
-        let apiResponse = getTargetData("Mike Garcia", dateOption)
+        let apiResponse = getTargetData("Mike Garcia", stockData['ticker'], dateOption)
         console.log(apiResponse)
         let newSeries = {'name': 'Mike Garcia', 'values': [apiResponse[0], apiResponse[1]]}
         setCurrentTarget(newSeries)
         targetData = newSeries
     }
     const searchForSBuyer = () => {
-        let apiResponse = getTargetData("Stephen Buyer", dateOption)
+        let apiResponse = getTargetData("Stephen Buyer", stockData['ticker'], dateOption)
     }
 
     return (
@@ -232,22 +272,32 @@ function targetSearchBar() {
 
 function stockSearchBox() {
     const [currentStock, setCurrentStock] = useState("")
+    const [isSending, setIsSending] = useState(false)
+    var tempSearchTickerWithoutRender = ""
 
     const handleInputStockChange = (event) => {
-        setCurrentStock(event.target.value);
+        let val = event.target.value
+        setCurrentStock(val);
+        tempSearchTickerWithoutRender = val
     }
 
-    const searchForNewTarget = () => {
-        let apiResponse = getMarketData(currentStock, dateOption)
+    const searchForNewTarget = useCallback(async() => {
+        if (isSending) return
+        setIsSending(true)
+        console.log(tempSearchTickerWithoutRender)
+        let apiResponse = await getMarketData(currentStock, dateOption)
+        setIsSending(false)
+        console.log(tempSearchTickerWithoutRender)
         let value = apiResponse['currentValue']
         let name = apiResponse['name']
         let seriesD = apiResponse['seriesData']
-        stockData['ticker'] = currentStock
-        setCurrentStock("")
+        let ticker = apiResponse['tick']
+        stockData['ticker'] = ticker
         stockData['name'] = name
+        setCurrentStock("")
         graphData['seriesData'] = seriesD
         stockData['currentValue'] = value
-    }
+    }, [isSending])
 
     return (
         <div className="searchBoxHolder">
@@ -294,6 +344,7 @@ function politicianSearchBar() {
 }
 
 function stockChart(){
+
     if (singleTargetMode == true) {
         var series = [
           {
@@ -410,23 +461,62 @@ function stockChart(){
           </div>
         );
     } else {
-          var seriesData = getStocksBoughtByData('asdf', 'asfd')
-          var series = [
-          ];
-          series.push({name: 'marketData',
-                       type: 'area',
-                       data: graphData['seriesData']})
+//          async function waitForAllStocksData() {
+//              var sd = getStocksBoughtByData(stockData['ticker'], dateOption)
+//              return sd
+//          }
+//          var dataFromWaiting = waitForAllStocksData()
+//          async function reformatAPIData(sd) {
+//              var series = [];
+//              series.push({name: 'marketData',
+//                           type: 'area',
+//                           data: graphData['seriesData']})
+//
+//              var bc = ['#3A0080']
+//              console.log('will error if undefined at this point')
+//              console.log(sd)
+//              for (let i = 0; i < sd[0].length; i++) {
+//                series.push(sd[0][i])
+//                bc.push('#003c00')
+//              }
+//              for (let i = 0; i < sd[1].length; i++) {
+//                series.push(sd[1][i])
+//                bc.push('#460000')
+//              }
+//              console.log(series)
+//              return [series, bc]
+//          }
+//          var reformattedData = reformatAPIData(dataFromWaiting)
+//          var series = reformattedData[0]
+//          var barColors = reformattedData[1]
 
-        var barColors = ['#3A0080']
-        for (let i = 0; i < seriesData[0].length; i++) {
-            series.push(seriesData[0][i])
-            barColors.push('#003c00')
+//          console.log(reformattedData)
+
+
+        var series = [];
+        series.push({name: 'marketData',
+                     type: 'area',
+                     data: graphData['seriesData']})
+        for (let i  = 0; i < targetsData.length; i++) {
+            series.push(targetsData[i])
         }
-        for (let i = 0; i < seriesData[1].length; i++) {
-            series.push(seriesData[1][i])
-            barColors.push('#460000')
-        }
+
+        console.log('series to be graphed')
         console.log(series)
+
+//        var seriesData = getStocksBoughtByData(stockData['ticker'], dateOption)
+//        var barColors = ['#3A0080']
+//        console.log('will error if undefined at this point')
+//        console.log(seriesData)
+//        for (let i = 0; i < seriesData[0].length; i++) {
+//                series.push(seriesData[0][i])
+//                barColors.push('#003c00')
+//        }
+//        for (let i = 0; i < seriesData[1].length; i++) {
+//                series.push(seriesData[1][i])
+//                barColors.push('#460000')
+//        }
+//        console.log(series)
 
         var options = {
           chart: {
@@ -438,12 +528,7 @@ function stockChart(){
           },
           dataLabels: {
             enabled: true,
-            enabledOnSeries: [1, 2],
-            formatter: function(val, opt) {
-                if (val != null) {
-                    return val
-                }
-            }
+
           },
           xaxis: {
                 axisTicks: {
@@ -489,7 +574,7 @@ function stockChart(){
                 show: true
             }
           },
-          colors: barColors,
+          colors: graphData['barData'],
             fill: {
               type: 'gradient',
               gradient: {
@@ -509,9 +594,9 @@ function stockChart(){
                         enabled: true, // Enable data labels on hover
                       },
             },
-            bar: {
+            column: {
                 dataLabels: {
-                    position: 'bottom'
+                    position: 'top'
                 }
             }
           },

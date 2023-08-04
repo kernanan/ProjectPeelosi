@@ -20,14 +20,14 @@ class DarqubeAPICaller(StockMarketAPICaller):
     def getHistoricalStockData(self, tickerId, fromDate, toDate):
         fromDate = self.convertToUnixTime(fromDate)
         toDate = self.convertToUnixTime(toDate)
-        marketDataFromTickerURL = 'https://api.darqube.com/data-api/market_data/historical/TSLA?token={0}&start_date={1}&end_date={2}&interval=1d'.format(self.authToken, fromDate, toDate)
+        marketDataFromTickerURL = 'https://api.darqube.com/data-api/market_data/historical/' + tickerId + '?token={0}&start_date={1}&end_date={2}&interval=1d'.format(self.authToken, fromDate, toDate)
         headers = {'accept': 'application/json'}
         historicalData = self.requestJSONByURL(marketDataFromTickerURL, headers=headers)
         historicalData = self.reformatToStandard(historicalData)
         return historicalData
 
     def convertToUnixTime(self, initialDate):
-        dateObj = datetime.datetime.strptime(initialDate, "%Y-%m-%d")
+        dateObj = datetime.datetime.strptime(initialDate, "%m-%d-%Y")
         unixTime = int(dateObj.timestamp())
         return unixTime
 

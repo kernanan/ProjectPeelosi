@@ -6,7 +6,11 @@ from APICaller import APICaller
 
 
 def convertMDY(param):
-    conv = "-".join(param.split("-")[::-1])
+    reverse = param.split("-")[::-1]
+    temp = reverse[1]
+    reverse[1] = reverse[2]
+    reverse[2] = temp
+    conv = "-".join(reverse)
     return conv
 
 
@@ -26,9 +30,13 @@ class FinnhubAPICaller(APICaller):
         formattedData = {}
         fromTransactionDate = convertMDY(fromTransactionDate)
         for data in finnData['data']:
-            if 'transactionDate' in data:
+            if 'transactionDate' in data and 'symbol' in data and 'name' in data:
                 if data["transactionDate"] >= fromTransactionDate:
-                    formattedData[data["transactionDate"]] = data
+                    name = data['name']
+                    date = data['transactionDate']
+                    if name not in formattedData:
+                        formattedData[name] = {}
+                    formattedData[name][date] = data
                 else:
                     break
         print(getStockTradesURL)
@@ -44,18 +52,17 @@ class FinnhubAPICaller(APICaller):
         for data in finnData['data']:
             if 'transactionDate' in data and 'name' in data:
                 if data['transactionDate'] >= fromTransactionDate:
-                    name = data['name']
-                    date = data['transactionDate']
-                    if name not in formattedData:
-                        formattedData[name] = {}
-                    formattedData[name][date] = data
+                    if data['name'] == politicianName:
+                        date = data['transactionDate']
+                        formattedData[date] = data
                 else:
                     break
+
         print(formattedData)
         return formattedData
 
 if __name__ == '__main__':
     caller = FinnhubAPICaller()
     caller.getStockTrades('TSLA', '07-06-2023', '07-31-2023')
-    caller.getPoliticianTradesOnAStock('Taneja Vaibhav', 'TSLA', '06-06-2023', '07-31-2023')
+    # caller.getPoliticianTradesOnAStock('Taneja Vaibhav', 'TSLA', '06-06-2023', '07-31-2023')
 

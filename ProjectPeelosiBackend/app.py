@@ -27,7 +27,7 @@ from src.Domain.StockMarketTracker import StockMarketTracker
 from src.Domain.TargetTracker import TargetTracker
 
 app = Flask(__name__)
-siteToSourcePoliticianData = 'Benzinga'
+siteToSourcePoliticianData = 'Finnhub'
 targetTracker = TargetTracker(siteToSourcePoliticianData)
 siteToSourceStockMarketData = 'Darqube'
 marketTracker = StockMarketTracker(siteToSourceStockMarketData)
@@ -83,12 +83,12 @@ def helloFromPath():
     return jsonify(message='Hello from Path')
 
 def getTodaysDate():
-    today = datetime.today().strftime('%Y-%m-%d')
+    today = datetime.today().strftime('%m-%d-%Y')
     return today
 
 def getTwoWeeksAgo():
     twoWeeksAgo = datetime.today() - timedelta(weeks=2)
-    formatted = twoWeeksAgo.strftime('%Y-%m-%d')
+    formatted = twoWeeksAgo.strftime('%m-%d-%Y')
     return formatted
 
 @app.errorhandler(404)

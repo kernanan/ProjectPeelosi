@@ -25,7 +25,7 @@ class TargetTracker():
             self.APICaller = BenzingaAPICaller()
         elif source == 'HouseStockWatcherAPI':
             self.APICaller = HouseStockWatcherAPICaller()
-        elif source == 'HouseStockWatcherAPI':
+        elif source == 'Finnhub':
             self.APICaller = FinnhubAPICaller()
         else:
             print('The Source you have entered is invalid. Defaulting to Benzinga.')
@@ -43,9 +43,6 @@ class TargetTracker():
         return stockInfo
 
     def getStatisticsOnPolitician(self, targetName, tickerId, fromTransactionDate, toTransactionDate):
-        dateRegexPattern = r"^\d{4}-\d{2}-\d{2}$"
-        if not re.match(dateRegexPattern, fromTransactionDate) or not re.match(dateRegexPattern, toTransactionDate):
-            raise SyntaxError("Date is not in form: {0}".format('%Y-%m-%d'))
         politicianInfo = {}
         print('Getting Information on politician {0}'.format(targetName))
         dataOnThisPolitician = self.APICaller.getPoliticianTradesOnAStock(targetName, tickerId, fromTransactionDate, toTransactionDate)
@@ -56,12 +53,9 @@ class TargetTracker():
         return politicianInfo
 
     def getAllPoliticianBuys(self, targetName, fromTransactionDate, toTransactionDate):
-        dateRegexPattern = r"^\d{4}-\d{2}-\d{2}$"
-        if not re.match(dateRegexPattern, fromTransactionDate) or not re.match(dateRegexPattern, toTransactionDate):
-            raise SyntaxError("Date is not in form: {0}".format('%Y-%m-%d'))
         politicianInfo = {}
         print('Getting Information on politician {0}'.format(targetName))
-        dataOnThisPolitician = self.APICaller.getPoliticianTradesOnAStock(targetName, tickerId, fromTransactionDate,
+        dataOnThisPolitician = self.APICaller.getStockTrades(targetName, fromTransactionDate,
                                                                           toTransactionDate)
         if len(dataOnThisPolitician) == 0:
             politicianInfo[targetName] = 'No Data Found'
